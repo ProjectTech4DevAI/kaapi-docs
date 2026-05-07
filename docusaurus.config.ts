@@ -16,8 +16,10 @@ const config: Config = {
   url: 'https://kaapi.github.io',
   baseUrl: '/',
 
-  organizationName: 'Project Tech4Dev',
+  organizationName: 'ProjectTech4DevAI',
   projectName: 'Kaapi',
+  deploymentBranch: "gh-pages",
+  trailingSlash: false,
 
   onBrokenLinks: 'throw',
 
