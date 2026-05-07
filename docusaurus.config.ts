@@ -13,8 +13,8 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://kaapi.github.io',
-  baseUrl: '/',
+  url: 'https://projecttech4devai.github.io',
+  baseUrl: '/kaapi-docs/',
 
   organizationName: 'ProjectTech4DevAI',
   projectName: 'kaapi-docs',
@@ -36,6 +36,7 @@ const config: Config = {
       'classic',
       {
         docs: {
+          routeBasePath: '/',
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/glific/docs/tree/main",
         },
@@ -67,7 +68,7 @@ const config: Config = {
       },
       items: [
         {
-          to: '/docs/docs',
+          to: '/',
           label: 'Documentation',
           position: 'left',
         },
@@ -86,7 +87,7 @@ const config: Config = {
           items: [
             {
               label: 'Documentation',
-              to: '/docs/docs',
+              to: '/',
             },
           ],
         },
