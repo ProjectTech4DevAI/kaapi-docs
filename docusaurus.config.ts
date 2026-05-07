@@ -17,7 +17,7 @@ const config: Config = {
   baseUrl: '/',
 
   organizationName: 'ProjectTech4DevAI',
-  projectName: 'Kaapi',
+  projectName: 'kaapi-docs',
   deploymentBranch: "gh-pages",
   trailingSlash: false,
 
