@@ -1,11 +1,12 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
-import type * as Preset from '@docusaurus/preset-classic';
+import { themes as prismThemes } from "prism-react-renderer";
+import type { Config } from "@docusaurus/types";
+import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
-  title: 'Kaapi',
-  tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
+  title: "Kaapi",
+  tagline:
+    "Build AI features through Kaapi unified platform. Console for programme leads, API for engineers.",
+  favicon: "img/favicon.ico",
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -13,30 +14,30 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://projecttech4devai.github.io',
-  baseUrl: '/kaapi-docs/',
+  url: "https://projecttech4devai.github.io",
+  baseUrl: "/kaapi-docs/",
 
-  organizationName: 'ProjectTech4DevAI',
-  projectName: 'kaapi-docs',
+  organizationName: "ProjectTech4DevAI",
+  projectName: "kaapi-docs",
   deploymentBranch: "gh-pages",
   trailingSlash: false,
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: "throw",
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: "en",
+    locales: ["en"],
   },
 
   presets: [
     [
-      'classic',
+      "classic",
       {
         docs: {
-          routeBasePath: '/',
+          routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/glific/docs/tree/main",
         },
@@ -56,60 +57,60 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: "img/docusaurus-social-card.jpg",
     colorMode: {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Kaapi',
+      title: "Kaapi",
       logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        alt: "My Site Logo",
+        src: "img/logo.svg",
       },
       items: [
         {
-          to: '/',
-          label: 'Documentation',
-          position: 'left',
+          to: "/",
+          label: "Documentation",
+          position: "left",
         },
         {
-          href: 'https://github.com/ProjectTech4DevAI',
-          label: 'GitHub',
-          position: 'right',
+          href: "https://github.com/ProjectTech4DevAI",
+          label: "GitHub",
+          position: "right",
         },
       ],
     },
     footer: {
-      style: 'dark',
+      style: "dark",
       links: [
         {
-          title: 'Docs',
+          title: "Docs",
           items: [
             {
-              label: 'Documentation',
-              to: '/',
+              label: "Documentation",
+              to: "/",
             },
           ],
         },
         {
-          title: 'Community',
+          title: "Community",
           items: [
             {
-              label: 'Discord',
-              href: 'https://discord.gg/q8S6cY3eG',
+              label: "Discord",
+              href: "https://discord.gg/q8S6cY3eG",
             },
           ],
         },
         {
-          title: 'More',
+          title: "More",
           items: [
             {
-              label: 'Blog',
-              href: 'https://projecttech4dev.org/blogs/',
+              label: "Blog",
+              href: "https://projecttech4dev.org/blogs/",
             },
             {
-              label: 'GitHub',
-              href: 'https://github.com/ProjectTech4DevAI',
+              label: "GitHub",
+              href: "https://github.com/ProjectTech4DevAI",
             },
           ],
         },
