@@ -39,7 +39,7 @@ const config: Config = {
         docs: {
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
-          editUrl: "https://github.com/glific/docs/tree/main",
+          editUrl: "https://github.com/ProjectTech4DevAI/kaapi-docs/tree/main",
         },
         blog: {
           showReadingTime: true,
