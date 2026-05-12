@@ -2,22 +2,134 @@
 
 As a Kaapi partner, your organisation will be onboarded by the Kaapi team or one of our delivery partners. The steps below help you get into the platform once that's set up.
 
+---
+
 ## As a first-time user
 
-1. _Onboarding step 1 — placeholder_
-2. _Onboarding step 2 — placeholder_
-3. _Onboarding step 3 — placeholder_
-4. _Onboarding step 4 — placeholder_
+There are two ways to access Kaapi:
 
-:::note[Not sure if you're set up yet?]
+- **Flow A — Sign in with your registered account** (Google or email magic link). Full access to your organisation's workspace.
+- **Flow B — Connect with an X-API key.** Lightweight access for running evaluations without a full user account.
 
-If you're not sure whether your organisation is set up on Kaapi, reach out to [kaapi@projecttech4dev.org](mailto:kaapi@projecttech4dev.org) or to the partner helping you with setup.
+Choose the flow that matches what your Kaapi administrator shared with you.
+
+---
+
+## Flow A — Sign in with Google or Email
+
+### Step 1: Receive your invitation
+
+- Your Kaapi administrator (or a delivery partner) invites your email address.
+- You'll receive an invitation email from Kaapi.
+
+### Step 2: Activate your account
+
+- Open the invitation email and click the invite link.
+- This opens `/invite`, verifies the token, and activates your account.
+
+:::caution[Invitation link issues]
+
+If you see **"Invitation link is invalid or has expired"**, contact to kaapi support for a new link.
 
 :::
 
-## Want to explore Kaapi before onboarding?
+### Step 3: Sign in
 
-If you're evaluating Kaapi for your NGO and want to see the platform before committing, contact us at [kaapi@projecttech4dev.org](mailto:kaapi@projecttech4dev.org). We'll walk you through the console, the API, and a use case relevant to your work.
+On the login screen, choose one of:
+
+#### Option 1 — Continue with Google
+
+- Click **"Continue with Google"**.
+- Pick the Google account that matches the email your organisation registered.
+- You'll be signed in and redirected into the app.
+
+:::note
+
+If you see **"Your Google email isn't assigned to any organization or projects on Kaapi"**, your Google account doesn't match a registered user — contact [Kaapi Support](mailto:support-kaapi@projecttech4dev.org).
+
+:::
+
+#### Option 2 — Email me a login link (magic link)
+
+- Enter your registered email and click **"Send login link"**.
+- Check your inbox for the email from Kaapi.
+- Click the link **within 15 minutes** (links expire after that).
+- The link opens `/verify`, signs you in, and redirects you into the app.
+
+### Step 4: Start using Kaapi
+
+- Once signed in, the sidebar gives access to **Configurations**, **Datasets**, **Evaluations**, **Guardrails**, **Knowledge Base**, and more.
+- Superusers additionally see **Settings** for organisation-level admin.
+
+---
+
+## Flow B — Connect with an X-API Key (Keystore)
+
+Use this flow if your administrator has given you an API key instead of (or in addition to) a user invitation.
+
+### Step 1: Obtain your API key
+
+- Your Kaapi administrator generates and shares an API key with you out-of-band (email, secure password manager, etc.).
+
+:::caution[Keep this key confidential]
+
+Anyone with the key can act on its behalf.
+
+:::
+
+### Step 2: Open the Keystore
+
+- Navigate to `/keystore` in the app.
+
+:::note
+
+Keystore is only accessible when **signed out**. If you're already signed in with a user account, sign out first (or simply use Flow A — you don't need a key).
+
+:::
+
+### Step 3: Add your API key
+
+1. Click **"Add API Key"** to open the dialog.
+2. Select **Provider = Kaapi**.
+3. Give the key a **Label** (e.g., _"Production Key"_) so you can recognise it later.
+4. Paste the API key into the **API Key** field.
+5. Click **"Add API Key"**.
+
+### Step 4: Validation and storage
+
+- The key is validated against the backend (`POST /api/apikeys/verify`) before being saved.
+- If validation fails, you'll see **"Invalid API key. Please check the key and try again."** — re-check the value with your administrator.
+- Once valid, the key is stored in your browser's local storage and used to authorise API requests across the app.
+
+### Step 5: Manage your key
+
+- Only **one API key** can be stored at a time. To replace it, delete the existing key and add a new one.
+- Use the action icons on the key card to:
+  - 👁 **Show / hide** the key value
+  - 📋 **Copy** the key to clipboard
+  - 🗑 **Delete** the key
+
+### Step 6: Start using Kaapi
+
+- With a valid key in place, you can use **Evaluations** and related workflows that accept X-API key authentication.
+
+---
+
+## Troubleshooting
+
+| Symptom | Resolution |
+| --- | --- |
+| **"No account found"** on Google sign-in | Your Google email is not registered. Contact [Kaapi Support](mailto:support-kaapi@projecttech4dev.org). |
+| **"Login link is invalid or has expired"** | Magic links expire after 15 minutes. Request a new one from the login screen. |
+| **"Invitation link is invalid or has expired"** | Ask your administrator to re-send the invite. |
+| **"Invalid API key"** in Keystore | Confirm the exact key value with your administrator; check for trailing spaces. |
+| **Session expired while working** | Kaapi will sign you out automatically; sign back in to continue. |
+
+:::tip[Need help?]
+
+Reach out to [Kaapi Support](mailto:support-kaapi@projecttech4dev.org) or your organisation administrator.
+
+:::
 
 ---
 
