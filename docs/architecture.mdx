@@ -1,0 +1,186 @@
+# How Kaapi Works
+
+Kaapi is AI middleware: a managed platform that sits between your applications and the world's AI providers, handling the complexity of model access, knowledge retrieval, safety enforcement, and quality validation — so your team can focus on building the features that matter to your users.
+
+This page explains the platform's architecture at the level a product or programme lead needs: enough to make good decisions about how to structure your AI features, without the implementation details that belong in the engineering reference.
+
+---
+
+## The organizing principle: the AI Config
+
+Every AI feature you build through Kaapi is expressed as an **AI Config** — a versioned recipe that fully describes how a particular task should behave:
+
+- Which **provider and model** to use (OpenAI, Google Gemini, Sarvam AI, ElevenLabs, and others)
+- What **instructions** the model follows — the system prompt that sets its behaviour and persona
+- Which **knowledge base** to search when answering questions, if any
+- Which **safety validators** to apply before the model sees a message and again after it responds
+- Parameters like temperature, response length, and reasoning depth
+
+Configs are versioned automatically. Adjusting any setting creates a new version; the original is unchanged. The version that passes your evaluation is exactly the version that runs in production — there is no drift between what you tested and what you shipped.
+
+When you are ready to go live, you **lock** the config version. A locked version cannot be modified. Future changes produce a new version that must pass its own evaluation before you promote it. This is how Kaapi gives you confidence that the AI behaviour in production is the behaviour you signed off on.
+
+---
+
+## The five building blocks
+
+```
+ Your content                       Your application
+      │                                     ▲
+      │  1. upload                          │  result
+      ▼                                     │
+ Knowledge Base  ──── 3. RAG search ──►  LLM Call ◄── AI Config
+ (vector index)                              │       (model · prompt ·
+                                             │        knowledge base ·
+                                       ┌─────┘         guardrails)
+                                       │
+                                  Guardrails
+                                (input + output)
+```
+
+### 1. Documents and Knowledge Bases
+
+A **knowledge base** is a searchable index built from your own content — policies, programme guidelines, field manuals, training material. When the AI answers a question, it searches this index for relevant passages at call time, rather than relying only on what it was trained on. The industry calls this retrieval-augmented generation (RAG); in Kaapi, it is configured with a single field in your AI config.
+
+Building a knowledge base is a two-step process:
+
+1. **Upload documents** — PDFs, Word files, plain text, each stored individually and referenced by ID. Large or scanned files can optionally be converted to clean text (markdown) before indexing, which improves retrieval quality on handwritten content and complex tables.
+2. **Create a collection** — group a set of document IDs into a knowledge base. Kaapi processes them in the background (minutes for typical collections), building a vector index on the provider's infrastructure. You are notified when it is ready.
+
+Knowledge bases are **immutable once created**. If you need to change the content — adding a new policy, removing an outdated guide — you create a new collection and update your AI config to reference it. This is a deliberate design choice: it ensures that the knowledge base your config references in production is the exact one you evaluated it against, and it cannot drift under you without an explicit change.
+
+### 2. AI Configs
+
+The config is where you make all the decisions about how your AI feature behaves. It is a structured record stored and versioned in Kaapi — not code.
+
+A config specifies:
+- **Mode** — text (chat, Q&A, vision, document understanding), speech-to-text, or text-to-speech
+- **Provider and model** — the specific AI service to call
+- **Instructions** — the system prompt: the persona, rules, and constraints the model must follow
+- **Knowledge base** — which collection to search and how many results to surface per query
+- **Guardrails** — which validators to apply, and what to do when they fire
+
+This separation between the recipe (config) and the invocation (call) means your application code is stable across experiments. Swap the model, tighten the prompt, attach a new knowledge base — the config changes, your integration code does not.
+
+### 3. LLM Calls
+
+An **LLM call** is a single invocation of an AI config. Your application sends a query; Kaapi runs the full pipeline — input guardrails, knowledge base search, model call, output guardrails — and delivers the result.
+
+Calls are **asynchronous**. Your request is accepted and immediately returns a job ID. The result arrives via a **webhook callback** to a URL you supply, or you can poll for it at any time. This model exists because AI responses can take anywhere from a second to over a minute — especially for audio processing and long documents — and holding your application open for that long is impractical.
+
+A single API endpoint handles all of the following input/output combinations:
+
+| Input | Output | Typical use |
+|---|---|---|
+| Text | Text | Chat, Q&A, document Q&A |
+| Image | Text | Visual understanding, form reading |
+| PDF | Text | Document summarisation, policy Q&A |
+| Audio | Text | Speech transcription (STT) |
+| Text | Audio | Voice responses (TTS) |
+
+Multi-turn conversations are supported natively: pass a conversation ID and Kaapi maintains context across turns without you managing history yourself.
+
+The provider and mode are determined entirely by the AI config — your application code does not change as you experiment with different models or switch providers.
+
+### 4. Guardrails
+
+Guardrails enforce safety policy on every call, automatically. They run in two places in the pipeline:
+
+- **Input guardrails** — applied to the user's message *before* it reaches the model
+- **Output guardrails** — applied to the model's response *before* it reaches the user
+
+You configure which validators to activate per AI config. Available validators include:
+
+| Validator | What it catches |
+|---|---|
+| PII detection | Personal data — including India-specific IDs: Aadhaar, PAN, passport, voter ID, vehicle registration |
+| Slur filter | Offensive language, bilingual (Hindi/English), with configurable severity thresholds |
+| Topic relevance | Questions outside the declared scope (e.g. "only answer queries about this scheme") |
+| Ban list | Custom words or phrases your project must never allow |
+| Toxicity classifier | NSFW and harmful content, ML-based |
+| Gender-bias removal | Stereotyping language in model output, replaced with neutral alternatives |
+
+When a validator finds a problem it can do one of three things, depending on how it is configured: **redact** the offending content and continue as if it was never there, **ask the user to rephrase** (returning a prompt to the user rather than calling the model at all — zero tokens consumed), or **block the call** entirely.
+
+Guardrails are operated as a separate service. If that service is temporarily unreachable, calls proceed without guardrails rather than failing. This means the safety layer degrades gracefully — it is not a single point of outage for your application.
+
+### 5. Evaluations
+
+Evaluations are how you move from *"I think this config works"* to *"I have evidence it works"* — before anything reaches real users.
+
+The process:
+
+1. Upload a **golden dataset** — a CSV of representative questions paired with expected answers (for text), or audio samples with reference transcriptions (for STT), or text samples (for TTS)
+2. Start an **evaluation run** pointing at a specific AI config version
+3. Kaapi fans the dataset through the provider's batch infrastructure — separate from the live API, so evaluation workloads never compete with production traffic
+4. Results come back with automated scores: **semantic similarity** (how close are the model's answers to the expected ones?) and **LLM-as-judge** (is the answer actually useful and correct?)
+5. Review the results, adjust the prompt, model, or knowledge base, and re-run
+6. When the scores satisfy you, lock that config version
+
+Because evaluations use batch infrastructure, they are not instant — runs typically complete in minutes to a few hours depending on dataset size. The trade-off is that a 500-question evaluation run has zero impact on your live application.
+
+**Assessments** are a related but distinct feature: rubric-based AI scoring of real submissions — written responses, voice recordings, multimodal answers — against a set of criteria you define. Where evaluations measure how good your *AI config* is, assessments are a deployed product feature for scoring *your users' work*. You upload a submission dataset, define the rubric in an AI config, and Kaapi returns structured scores, reasoning, and assessee-facing feedback — comparable across multiple AI config variants if you want to choose between rubrics.
+
+---
+
+## The lifecycle end to end
+
+Here is what building a knowledge-base chatbot looks like, from raw content to production:
+
+```
+1. Upload documents
+         │
+         ▼
+2. Create collection (knowledge base)
+         │
+         ▼
+3. Build AI Config ── reference collection + guardrails
+         │
+         ▼
+4. Quick-test in console ── sanity-check before formal evaluation
+         │
+         ▼
+5. Upload golden dataset
+         │
+         ▼
+6. Run evaluation ── review scores ── refine config ──┐
+         │                                             │
+         │  (scores meet your bar)                     │
+         ▼                                             │
+7. Lock config version ◄─────────────────────────────┘
+         │
+         ▼
+8. Production: your app calls the API with config ID + version
+```
+
+The same config ID and version that passed step 6 is the one your app pins in step 8. It cannot change beneath a live integration without an explicit decision to promote a new version.
+
+For a speech-to-speech application — a voice helpline in a local language, for example — the structure is the same but with STT and TTS configs. You can chain them through a single `POST /llm/chain` endpoint that accepts voice input and returns voice output via callback, with the intermediate text answer also available.
+
+---
+
+## Multi-provider support
+
+Kaapi abstracts provider differences. You pick a provider in the AI config; Kaapi maps your parameters to that provider's native API shape. If you move a config from GPT-4.1 to Gemini 2.5, your application code does not change — only the config does.
+
+| Capability | Providers |
+|---|---|
+| Text, vision, document understanding | OpenAI, Google Gemini |
+| Speech-to-text | Google Gemini, Sarvam AI |
+| Text-to-speech | Google Gemini, Sarvam AI, ElevenLabs |
+| Knowledge bases (RAG) | OpenAI Vector Stores |
+
+If a parameter you set is not supported by the provider you selected — for example, attaching a knowledge base to a Gemini config, which is not yet wired up — Kaapi surfaces a warning in the API response rather than silently ignoring it. You always know if your config is partially effective.
+
+---
+
+## For developers
+
+The four technical references below cover the implementation layer in full. Each maps to one of the subsystems described above.
+
+| Reference | What it covers |
+|---|---|
+| **LLM Call Architecture** | Full async pipeline, request anatomy, provider routing, guardrails integration, conversation state, observability, and failure handling |
+| **Knowledge Base Architecture** | Document upload, collection batching strategy, file-ID deduplication, known limitations (including the synchronous cascade on document deletion) |
+| **Evaluations Architecture** | Batch submission, cron-driven polling, two-batch scoring pipeline (responses then embeddings), STT and TTS evaluation paths, and the planned fast-evals mode |
+| **Guardrails Architecture** | Complete validator inventory, on-fail behaviour, configuration management, and the guardrails SDK integration |
