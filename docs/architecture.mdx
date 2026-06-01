@@ -24,18 +24,20 @@ When you are ready to go live, you **lock** the config version. A locked version
 
 ## The five building blocks
 
-```
- Your content                       Your application
-      │                                     ▲
-      │  1. upload                          │  result
-      ▼                                     │
- Knowledge Base  ──── 3. RAG search ──►  LLM Call ◄── AI Config
- (vector index)                              │       (model · prompt ·
-                                             │        knowledge base ·
-                                       ┌─────┘         guardrails)
-                                       │
-                                  Guardrails
-                                (input + output)
+```mermaid
+flowchart LR
+    App([Your application]) -->|query| IG
+
+    subgraph Pipeline[Inside every LLM Call]
+        direction LR
+        IG[Input\nGuardrails] --> RAG[Knowledge Base\nsearch] --> Model[Model\ncall] --> OG[Output\nGuardrails]
+    end
+
+    OG -->|result via webhook| App
+
+    Docs([Your documents]) -->|upload| KB[(Knowledge Base)]
+    KB -.->|referenced in| Config
+    Config[AI Config\nmodel · prompt · knowledge base · guardrails] -.->|drives| Pipeline
 ```
 
 ### 1. Documents and Knowledge Bases
@@ -127,30 +129,18 @@ Because evaluations use batch infrastructure, they are not instant — runs typi
 
 Here is what building a knowledge-base chatbot looks like, from raw content to production:
 
-```
-1. Upload documents
-         │
-         ▼
-2. Create collection (knowledge base)
-         │
-         ▼
-3. Build AI Config ── reference collection + guardrails
-         │
-         ▼
-4. Quick-test in console ── sanity-check before formal evaluation
-         │
-         ▼
-5. Upload golden dataset
-         │
-         ▼
-6. Run evaluation ── review scores ── refine config ──┐
-         │                                             │
-         │  (scores meet your bar)                     │
-         ▼                                             │
-7. Lock config version ◄─────────────────────────────┘
-         │
-         ▼
-8. Production: your app calls the API with config ID + version
+```mermaid
+flowchart TD
+    A[1 · Upload documents] --> B[2 · Create collection\nknowledge base]
+    B --> C[3 · Build AI Config\nattach collection + guardrails]
+    C --> D[4 · Quick-test in console]
+    D --> E[5 · Upload golden dataset]
+    E --> F[6 · Run evaluation]
+    F --> G{Scores\nsatisfied?}
+    G -- No --> H[Refine config\nprompt · model · knowledge base]
+    H --> F
+    G -- Yes --> I[7 · Lock config version]
+    I --> J[8 · Production\nAPI call with config ID + version]
 ```
 
 The same config ID and version that passed step 6 is the one your app pins in step 8. It cannot change beneath a live integration without an explicit decision to promote a new version.
