@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkkaapi_docs=self.webpackChunkkaapi_docs||[]).push([["1311"],{2714(a){a.exports=JSON.parse('{"metadata":{"permalink":"/kaapi-docs/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":0,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
