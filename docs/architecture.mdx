@@ -8,7 +8,7 @@ This page explains the platform's architecture at the level a product or program
 
 ## The organizing principle: the AI Config
 
-Every AI feature you build through Kaapi is expressed as an **AI Config** — a versioned recipe that fully describes how a particular task should behave:
+Every small tweak you make to change the way the AI responds to your needs is an **AI Config** — a single change that affects how the AI behaves:
 
 - Which **provider and model** to use (OpenAI, Google Gemini, Sarvam AI, ElevenLabs, and others)
 - What **instructions** the model follows — the system prompt that sets its behaviour and persona
@@ -16,7 +16,7 @@ Every AI feature you build through Kaapi is expressed as an **AI Config** — a 
 - Which **safety validators** to apply before the model sees a message and again after it responds
 - Parameters like temperature, response length, and reasoning depth
 
-Configs are versioned automatically. Adjusting any setting creates a new version; the original is unchanged. The version that passes your evaluation is exactly the version that runs in production — there is no drift between what you tested and what you shipped.
+Configs are versioned automatically. Adjusting any setting creates a new version; the original is unchanged. The version that passes your evaluation is exactly the version that runs in production — there is no drift between what you **tested** and what you shipped.
 
 When you are ready to go live, you **lock** the config version. A locked version cannot be modified. Future changes produce a new version that must pass its own evaluation before you promote it. This is how Kaapi gives you confidence that the AI behaviour in production is the behaviour you signed off on.
 
@@ -57,7 +57,7 @@ The config is where you make all the decisions about how your AI feature behaves
 
 A config specifies:
 - **Mode** — text (chat, Q&A, vision, document understanding), speech-to-text, or text-to-speech
-- **Provider and model** — the specific AI service to call
+- **Provider and model** — the AI service to call and the specific model you want to use, picking one that specialises in the work the task requires (e.g. chat, vision, transcription, or speech)
 - **Instructions** — the system prompt: the persona, rules, and constraints the model must follow
 - **Knowledge base** — which collection to search and how many results to surface per query
 - **Guardrails** — which validators to apply, and what to do when they fire
@@ -101,8 +101,13 @@ You configure which validators to activate per AI config. Available validators i
 | Ban list | Custom words or phrases your project must never allow |
 | Toxicity classifier | NSFW and harmful content, ML-based |
 | Gender-bias removal | Stereotyping language in model output, replaced with neutral alternatives |
+| Answer relevance | Model responses that drift off-topic or fail to address the user's actual question |
 
-When a validator finds a problem it can do one of three things, depending on how it is configured: **redact** the offending content and continue as if it was never there, **ask the user to rephrase** (returning a prompt to the user rather than calling the model at all — zero tokens consumed), or **block the call** entirely.
+When a validator finds a problem, it can do one of three things, depending on how you configure it:
+
+- **Redact** — remove the flagged content and carry on.
+- **Ask the user to rephrase** — the user gets a prompt and the model is never called, so no tokens are used.
+- **Block the call** — stop the request entirely.
 
 Guardrails are operated as a separate service. If that service is temporarily unreachable, calls proceed without guardrails rather than failing. This means the safety layer degrades gracefully — it is not a single point of outage for your application.
 
@@ -114,8 +119,8 @@ The process:
 
 1. Upload a **golden dataset** — a CSV of representative questions paired with expected answers (for text), or audio samples with reference transcriptions (for STT), or text samples (for TTS)
 2. Start an **evaluation run** pointing at a specific AI config version
-3. Kaapi fans the dataset through the provider's batch infrastructure — separate from the live API, so evaluation workloads never compete with production traffic
-4. Results come back with automated scores: **semantic similarity** (how close are the model's answers to the expected ones?) and **LLM-as-judge** (is the answer actually useful and correct?)
+3. Kaapi takes the dataset and pairs each question with the chosen config, bundles them into a batch, and sends it to the AI service to be processed as a batch — separate from the live API, so evaluation workloads never compete with production traffic
+4. Once the results come back, **cosine similarity** between the model's answers and the expected ones is calculated through a batch again, while in parallel **LLM-as-judge** runs over the same answers, comparing each model answer to its expected one. Both scores are calculated and populated in the evaluation run result
 5. Review the results, adjust the prompt, model, or knowledge base, and re-run
 6. When the scores satisfy you, lock that config version
 
