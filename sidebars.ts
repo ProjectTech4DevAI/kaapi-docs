@@ -4,7 +4,6 @@ const sidebars: SidebarsConfig = {
   tutorialSidebar: [
     {type: 'doc', id: 'docs', label: 'Kaapi Overview'},
     {type: 'doc', id: 'architecture', label: 'How Kaapi Works'},
-    {type: 'doc', id: 'platform-overview', label: 'Platform Overview'},
     {type: 'doc', id: 'core-use-cases', label: 'Core Use Cases'},
     {type: 'doc', id: 'getting-started', label: 'Getting Started'},
   ],
