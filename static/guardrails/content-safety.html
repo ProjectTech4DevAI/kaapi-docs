@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content Safety — Guardrails</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #ffffff;
+    color: #111714;
+  }
+  .panel { max-width: 720px; margin: 0 auto; padding: 28px 26px 32px; }
+
+  .eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    color: #0a5e34; text-transform: uppercase; margin-bottom: 6px;
+  }
+  h1 { font-size: 21px; font-weight: 700; margin: 0 0 12px; }
+  .lede { font-size: 15px; color: #233029; line-height: 1.6; margin: 0 0 18px; }
+
+  /* What happens */
+  .what-happens {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: #ffffff; border: 1px solid rgba(122,144,135,0.28);
+    border-radius: 10px; padding: 13px 15px; margin-bottom: 22px;
+  }
+  .wh-badge {
+    flex-shrink: 0; font-size: 12px; font-weight: 700; border-radius: 99px;
+    padding: 4px 11px; white-space: nowrap; margin-top: 1px;
+  }
+  .wh-badge.fix { color: #0a5e34; background: rgba(17,150,86,0.14); }
+  .wh-badge.fallback { color: #8a5a1a; background: rgba(200,130,20,0.16); }
+  .wh-badge.block { color: #8a5a1a; background: rgba(200,130,20,0.16); }
+  .wh-badge.block .ico { color: #c0392b; }
+  .wh-text { font-size: 14px; color: #3a4a42; line-height: 1.5; }
+
+  .section-title { font-size: 15px; font-weight: 700; color: #111714; margin: 0 0 9px; }
+
+  /* Example */
+  .example-box {
+    background: #ffffff; border: 1px solid rgba(122,144,135,0.28);
+    border-radius: 10px; padding: 14px 15px; margin-bottom: 16px;
+  }
+  .example-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 9px; }
+  .example-tag {
+    flex-shrink: 0; font-size: 11px; font-weight: 700; border-radius: 6px;
+    padding: 3px 8px; margin-top: 2px; white-space: nowrap;
+  }
+  .example-tag.user { background: rgba(122,144,135,0.18); color: #3a4a42; }
+  .example-tag.bot { background: rgba(17,150,86,0.14); color: #0a5e34; }
+  .example-text {
+    font-size: 13.5px; color: #233029; line-height: 1.55;
+    font-family: 'SF Mono', Consolas, monospace;
+  }
+  .example-foot {
+    font-size: 12.5px; color: #5c7568; line-height: 1.45;
+    padding-top: 9px; border-top: 1px dashed rgba(122,144,135,0.35);
+  }
+
+  /* Note */
+  .note-box {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: #fdf8ec; border: 1px solid rgba(200,130,20,0.3);
+    border-radius: 10px; padding: 13px 15px; margin-bottom: 22px;
+  }
+  .note-box .ico { color: #8a5a1a; font-size: 14px; line-height: 1.5; flex-shrink: 0; }
+  .note-box .txt { font-size: 14px; color: #6b4a14; line-height: 1.5; }
+
+  /* Without */
+  .without-box {
+    background: #fdf2f2; border: 1px solid rgba(180,40,40,0.22);
+    border-radius: 10px; padding: 13px 15px; margin-bottom: 22px;
+  }
+  .without-text { font-size: 14px; color: #7a2e2e; line-height: 1.55; margin: 0; }
+  .without-text .wr-label { font-weight: 700; }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 22px; }
+  .stat {
+    background: #ffffff; border: 1px solid rgba(122,144,135,0.28);
+    border-radius: 12px; padding: 16px 18px;
+  }
+  .stat .big { font-size: 27px; font-weight: 800; color: #119656; line-height: 1.1; }
+  .stat .lbl { font-size: 14px; color: #111714; margin-top: 6px; font-weight: 700; }
+  .stat .sub { font-size: 12.5px; color: #5c7568; margin-top: 4px; line-height: 1.45; }
+
+  /* Technical details */
+  details.tech { border-top: 1px solid rgba(122,144,135,0.25); padding-top: 14px; }
+  details.tech summary {
+    font-size: 13px; font-weight: 700; color: #0a5e34; cursor: pointer; list-style: none;
+  }
+  details.tech summary::-webkit-details-marker { display: none; }
+  details.tech summary::before { content: "▸ "; }
+  details.tech[open] summary::before { content: "▾ "; }
+  .tech-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(110px,1fr)); gap: 14px 18px;
+    margin-top: 12px; background: #ffffff;
+    border: 1px solid rgba(122,144,135,0.25); border-radius: 10px; padding: 16px;
+  }
+  .tech-grid .k {
+    font-size: 11px; font-weight: 700; color: #9aaba2;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .tech-grid .v { font-size: 16px; font-weight: 700; color: #233029; margin-top: 4px; }
+  .tech-dataset {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin-top: 10px; border: 1px solid rgba(122,144,135,0.25);
+    border-radius: 10px; padding: 12px 16px;
+  }
+  .tech-dataset .k {
+    font-size: 11px; font-weight: 700; color: #9aaba2;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .tech-dataset a { font-size: 13.5px; font-weight: 600; color: #0a5e34; text-decoration: none; }
+  .tech-dataset a:hover { text-decoration: underline; }
+  .tech-foot { font-size: 12.5px; color: #5c7568; margin-top: 12px; line-height: 1.5; }
+
+  @media (max-width: 560px) {
+    .stats { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="panel">
+
+  <div class="eyebrow">Runs on incoming messages</div>
+  <h1>Content Safety</h1>
+  <p class="lede">Removes abusive or hurtful words from messages before the assistant reads them.</p>
+
+  <div class="what-happens">
+    <span class="wh-badge fix">↻ Fixes &amp; passes on</span>
+    <span class="wh-text">The message continues as normal, with the abusive word hidden. The user is not interrupted.</span>
+  </div>
+
+  <div class="section-title">Example</div>
+  <div class="example-box">
+    <div class="example-row">
+      <span class="example-tag user">User</span>
+      <span class="example-text">Don't be such an &lt;slur&gt;, you know?</span>
+    </div>
+    <div class="example-row">
+      <span class="example-tag bot">Assistant sees</span>
+      <span class="example-text">Don't be such an [REDACTED_SLUR], you know?</span>
+    </div>
+    <div class="example-foot">The word is hidden before the assistant reads the message.</div>
+  </div>
+
+  <div class="note-box">
+    <span class="ico">ⓘ</span>
+    <span class="txt">Works only when the incoming message is in English, Hindi or Hinglish. Messages in other languages pass through unchecked.</span>
+  </div>
+
+  <div class="section-title">Without this guardrail</div>
+  <div class="without-box">
+    <p class="without-text">The abusive word reaches the assistant, and may appear again in the reply. <span class="wr-label">Risk:</span> abusive language is not stopped, which hurts trust and looks bad for your organisation.</p>
+  </div>
+
+  <div class="section-title">How well it works</div>
+  <div class="stats">
+    <div class="stat">
+      <div class="big">78%</div>
+      <div class="lbl">Accuracy</div>
+      <div class="sub">Tested on 1,801 real-style messages in English and Hinglish.</div>
+    </div>
+    <div class="stat">
+      <div class="big">0.05 sec</div>
+      <div class="lbl">Response time</div>
+    </div>
+  </div>
+
+  <details class="tech" open>
+    <summary>Technical details</summary>
+    <div class="tech-grid">
+      <div><div class="k">Method</div><div class="v">Rule + ML</div></div>
+      <div><div class="k">Accuracy</div><div class="v">75%</div></div>
+      <div><div class="k">Precision</div><div class="v">85%</div></div>
+      <div><div class="k">Recall</div><div class="v">72%</div></div>
+      <div><div class="k">F1</div><div class="v">78%</div></div>
+      <div><div class="k">Sample size</div><div class="v">1,801</div></div>
+    </div>
+    <div class="tech-dataset">
+      <span class="k">Dataset</span>
+      <a href="https://drive.google.com/drive/folders/1afTO6K19w1WLJtpe3D0hUfS4dH5Rbos4?usp=drive_link" target="_blank" rel="noopener noreferrer">Evaluation dataset (1,801 samples) ↗</a>
+    </div>
+    <div class="tech-foot">Evaluated on 1,801 real-style messages in English and Hinglish. Precision (85%) means flags are usually correct — about 1 in 7 flagged messages was actually clean; recall (72%) means about 1 in 4 real slur/profanity cases in this test set were missed. F1 (78%) balances the two.</div>
+  </details>
+
+</div>
+
+</body>
+</html>
