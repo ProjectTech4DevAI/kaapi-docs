@@ -1,0 +1,53 @@
+# Privacy Protection
+
+**Runs on incoming messages**
+
+Finds personal details in what users send your assistant, and removes them before the message is answered or saved.
+
+:::tip
+
+Enabling this guard helps your organisation stay compliant with India's DPDP Act and GDPR.
+
+:::
+
+## What happens
+
+**↻ Fixes & passes on** — The message continues as normal, with personal details hidden. The user is not interrupted.
+
+## Example
+
+| | |
+| --- | --- |
+| **User** | `Mera naam Rahul Sharma hai, number 98765 43210 hai aur PAN ABCDE1234F hai.` |
+| **Assistant sees** | `Mera naam XXXXX XXXXX hai, number XXXXX XXXXX hai aur PAN XXXXXXXXXX hai.` |
+
+The real numbers are never saved or shown anywhere.
+
+## Without this guardrail
+
+:::danger
+
+Personal details get saved and can be shown again in the chat, exactly as the user typed them. **Risk:** personal data can leak, and users stop trusting your service.
+
+:::
+
+## How well it works
+
+| Accuracy | Response time |
+| --- | --- |
+| **86%** | **0.02 sec** |
+
+Tested on 419 real-style messages in English, Hindi and Hinglish.
+
+<details open>
+<summary>Technical details</summary>
+
+| Method | Accuracy | Precision | Recall | F1 | Sample size |
+| --- | --- | --- | --- | --- | --- |
+| Rule + ML | 84% | 92% | 80% | 86% | 419 |
+
+**Dataset:** [Evaluation dataset (419 samples) ↗](https://drive.google.com/drive/folders/1Fx8JDLZd-_lDnU68IOgT-turNW9N-c0V?usp=drive_link)
+
+Named-entity recognition tuned for Indian PII formats (Aadhaar-like numbers, phone numbers, addresses), evaluated on 419 real-style samples in English, Hindi and Hinglish. Precision (92%) means false alarms are rare; recall (80%) means about 1 in 5 real personal details slipped through unmasked. F1 (86%) balances the two.
+
+</details>

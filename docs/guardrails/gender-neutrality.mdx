@@ -1,0 +1,72 @@
+# Gender Neutrality
+
+**Runs on the assistant's replies**
+
+Stops the assistant from guessing someone's gender, and changes those words to ones that work for any gender.
+
+🔗 [View the full list of replacement words](https://github.com/ProjectTech4DevAI/kaapi-guardrails/blob/main/backend/app/core/validators/utils/files/gender_assumption_bias_words.csv)
+
+## What happens
+
+**↻ Fixes & passes on** — The reply is sent as normal, with the words changed. The user never sees the original wording.
+
+## Example
+
+| | |
+| --- | --- |
+| **Assistant would say** | `Aapka beta bada hoke doctor ya engineer ban sakta hai.` |
+| **Assistant actually sends** | `Aapka bachcha bada hoke doctor ya engineer ban sakta hai.` |
+
+Only the gender word changes. The advice stays the same.
+
+:::info
+
+Works only when the reply is in English, Hindi or Hinglish. Replies in other languages are sent unchecked.
+
+:::
+
+## Without this guardrail
+
+:::danger
+
+The assistant guesses a gender — like calling a child "beta" (son) — even when the user never said one. **Risk:** some users feel left out, and your programme feels less welcoming.
+
+:::
+
+## How well it works
+
+| Accuracy | Response time |
+| --- | --- |
+| **81%** | **0.28 ms** |
+
+Tested on 600 real-style messages across English, Hindi and Hinglish.
+
+## Known limitations
+
+:::warning
+
+- **Swapping a word can make the sentence sound a little clunky.**<br />
+  e.g. changing "beta" to "bachcha" mid-sentence can read slightly awkwardly.
+- **In Hindi, gender hides inside action words too, not just in words like "he" or "she."**<br />
+  e.g. "woh gaya" (he went) vs "woh gayi" (she went) — swapping one word doesn't fix the verb ending.
+- **Sometimes there's no neutral word to use, so it falls back to the boy/man version.**<br />
+  e.g. there's no common neutral form for "beta," so it becomes "bachcha" (child) instead.
+- **It only knows the words on its list — anything not on that list slips through.**<br />
+  e.g. a new spelling or slang term for a gendered word won't be caught if it isn't already in the list.
+- **It can't always tell a real question about gender apart from the assistant assuming one.**<br />
+  e.g. "scholarships for girls" is a genuine, valid question — the check must be careful not to "fix" something that wasn't wrong.
+
+:::
+
+<details open>
+<summary>Technical details</summary>
+
+| Method | Accuracy | Precision | Recall | F1 | Sample size |
+| --- | --- | --- | --- | --- | --- |
+| Rule-based | 80% | 76% | 87% | 81% | 600 |
+
+**Dataset:** [Evaluation dataset (600 samples) ↗](https://drive.google.com/drive/folders/1tLWC6-L7-V5bknZfbygHI-MpoDxAlSe5?usp=drive_link)
+
+Evaluated on 600 real-style messages across English, Hindi and Hinglish. Precision (76%) means about 1 in 4 flags is a false alarm; recall (87%) means most real gender assumptions are caught, though some still slip through. F1 (81%) balances the two.
+
+</details>

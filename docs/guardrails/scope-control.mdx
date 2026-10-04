@@ -1,0 +1,53 @@
+# Scope Control
+
+**Runs on incoming messages**
+
+Stops the assistant from answering questions about topics you choose. For example, a maternal-health assistant will not give legal or financial advice.
+
+## What happens
+
+**⊖ Blocks — sends set reply** — The message never reaches the AI assistant. The user gets the set reply you've written in the settings.
+
+## Example
+
+| | |
+| --- | --- |
+| **User** | `Is it okay to take this medicine?` |
+| **Assistant replies** | `Sorry, I can't help with that topic. I can only answer questions related to this programme.` |
+
+These questions are stopped before the assistant answers them.
+
+:::info
+
+Your set reply is automatically translated by AI to match the language the user wrote in — a Hindi message gets the reply in Hindi, an English one in English.
+
+:::
+
+## Without this guardrail
+
+:::danger
+
+The assistant answers questions it should stay away from. **Risk:** users may get wrong advice on serious topics like health or money.
+
+:::
+
+## How well it works
+
+| Accuracy | Response time |
+| --- | --- |
+| **82%** | **1–2 sec** |
+
+Tested on 355 real-style messages across education and healthcare topics, in English, Hinglish and Hindi.
+
+<details open>
+<summary>Technical details</summary>
+
+| Method | Accuracy | Precision | Recall | F1 | Sample size |
+| --- | --- | --- | --- | --- | --- |
+| LLM | 89% | 90% | 76% | 82% | 355 |
+
+**Dataset:** [Evaluation dataset (355 samples) ↗](https://drive.google.com/drive/folders/1gPfnUX1F42zVQbaSWMQDSUOslO3_J0dB?usp=drive_link)
+
+Evaluated on 355 real-style messages across education and healthcare topics, in English, Hinglish and Hindi. Precision (90%) means false alarms are rare — about 1 in 10 blocked messages was actually in scope; recall (76%) means roughly 1 in 4 out-of-scope questions still gets through. F1 (82%) balances the two.
+
+</details>
