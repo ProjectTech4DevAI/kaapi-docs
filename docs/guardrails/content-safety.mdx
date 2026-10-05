@@ -1,0 +1,53 @@
+# Content Safety
+
+**Runs on incoming messages**
+
+Removes abusive or hurtful words from messages before the assistant reads them.
+
+## What happens
+
+**↻ Fixes & passes on** — The message continues as normal, with the abusive word hidden. The user is not interrupted.
+
+## Example
+
+| | |
+| --- | --- |
+| **User** | `Don't be such an <slur>, you know?` |
+| **Assistant sees** | `Don't be such an [REDACTED_SLUR], you know?` |
+
+The word is hidden before the assistant reads the message.
+
+:::info
+
+Works only when the incoming message is in English, Hindi or Hinglish. Messages in other languages pass through unchecked.
+
+:::
+
+## Without this guardrail
+
+:::danger
+
+The abusive word reaches the assistant, and may appear again in the reply. **Risk:** abusive language is not stopped, which hurts trust and looks bad for your organisation.
+
+:::
+
+## How well it works
+
+| Accuracy | Response time |
+| --- | --- |
+| **78%** | **0.05 sec** |
+
+Tested on 1,801 real-style messages in English and Hinglish.
+
+<details open>
+<summary>Technical details</summary>
+
+| Method | Accuracy | Precision | Recall | F1 | Sample size |
+| --- | --- | --- | --- | --- | --- |
+| Rule + ML | 75% | 85% | 72% | 78% | 1,801 |
+
+**Dataset:** [Evaluation dataset (1,801 samples) ↗](https://drive.google.com/drive/folders/1afTO6K19w1WLJtpe3D0hUfS4dH5Rbos4?usp=drive_link)
+
+Evaluated on 1,801 real-style messages in English and Hinglish. Precision (85%) means flags are usually correct — about 1 in 7 flagged messages was actually clean; recall (72%) means about 1 in 4 real slur/profanity cases in this test set were missed. F1 (78%) balances the two.
+
+</details>
