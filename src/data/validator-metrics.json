@@ -42,39 +42,39 @@
     "groups": [
       {
         "name": "English",
-        "rows": 910,
-        "recall": 74,
-        "precision": null
+        "rows": 550,
+        "recall": 84,
+        "precision": 100
       },
       {
         "name": "Hindi",
-        "rows": 910,
-        "recall": 75,
-        "precision": null
+        "rows": 550,
+        "recall": 86,
+        "precision": 99
       },
       {
         "name": "Hinglish",
-        "rows": 910,
-        "recall": 72,
-        "precision": null
+        "rows": 550,
+        "recall": 84,
+        "precision": 100
       },
       {
         "name": "Kannada",
-        "rows": 910,
-        "recall": 73,
-        "precision": null
+        "rows": 550,
+        "recall": 85,
+        "precision": 99
       },
       {
         "name": "Marathi",
-        "rows": 910,
-        "recall": 75,
-        "precision": null
+        "rows": 550,
+        "recall": 86,
+        "precision": 99
       },
       {
         "name": "Telugu",
-        "rows": 910,
-        "recall": 72,
-        "precision": null
+        "rows": 550,
+        "recall": 84,
+        "precision": 99
       }
     ],
     "date": "2026-11-06"
