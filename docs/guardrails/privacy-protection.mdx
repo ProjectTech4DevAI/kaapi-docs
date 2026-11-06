@@ -1,3 +1,5 @@
+import {MetricsHeadline, MetricsDetails} from '@site/src/components/Metrics';
+
 # Privacy Protection
 
 **Runs on incoming messages**
@@ -31,23 +33,36 @@ Personal details get saved and can be shown again in the chat, exactly as the us
 
 :::
 
+## Settings
+
+Validator: `pii_remover`.
+
+| Setting | Values | What it does |
+| --- | --- | --- |
+| `entity_types` | list (default: all pattern-based types) | What to mask, e.g. `PHONE_NUMBER`, `EMAIL_ADDRESS`, `CREDIT_CARD`, `IN_AADHAAR`, `IN_PAN`, `IN_PASSPORT`, `IN_VOTER`. `PERSON`, `LOCATION` and `NRP` are opt-in. |
+
 ## How well it works
 
-| Accuracy | Response time |
-| --- | --- |
-| **86%** | **0.02 sec** |
+<MetricsHeadline validator="pii_remover" />
 
-Tested on 419 real-style messages in English, Hindi and Hinglish.
+Tested on real-style messages in English and Hindi.
+
+
+## Known limitations
+
+:::warning
+
+- **Some personal details are missed, especially in English.** Misses are mostly types not masked by default, such as first names, streets, states and currency.
+- **Ordinary words can be masked inside a message.** Ten-letter words like "assessment" can become a PAN placeholder when other personal details are nearby (PAN and phone-number masking have low precision).
+- **IMEI numbers are labelled as phone numbers.**
+
+:::
 
 <details open>
 <summary>Technical details</summary>
 
-| Method | Accuracy | Precision | Recall | F1 | Sample size |
-| --- | --- | --- | --- | --- | --- |
-| Rule + ML | 84% | 92% | 80% | 86% | 419 |
+<MetricsDetails validator="pii_remover" method="Rule + ML" />
 
 **Dataset:** [Evaluation dataset (419 samples) ↗](https://drive.google.com/drive/folders/1Fx8JDLZd-_lDnU68IOgT-turNW9N-c0V?usp=drive_link)
-
-Named-entity recognition tuned for Indian PII formats (Aadhaar-like numbers, phone numbers, addresses), evaluated on 419 real-style samples in English, Hindi and Hinglish. Precision (92%) means false alarms are rare; recall (80%) means about 1 in 5 real personal details slipped through unmasked. F1 (86%) balances the two.
 
 </details>
