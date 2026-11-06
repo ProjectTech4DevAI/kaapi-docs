@@ -5,53 +5,79 @@
   },
   "content_safety": {
     "rows": 1801,
-    "accuracy": 74,
-    "precision": 90,
-    "recall": 66,
-    "f1": 76,
-    "latency_ms": 0.8579999848734587,
+    "accuracy": 80,
+    "precision": 80,
+    "recall": 92,
+    "f1": 85,
+    "latency_ms": 7.076249981764704,
     "groups": [
       {
         "name": "English",
         "rows": 727,
-        "recall": 58,
-        "precision": 91
+        "recall": 89,
+        "precision": 80
       },
       {
         "name": "Hindi (Devanagari)",
         "rows": 193,
-        "recall": 43,
-        "precision": 92
+        "recall": 92,
+        "precision": 66
       },
       {
         "name": "Hinglish",
         "rows": 881,
-        "recall": 76,
-        "precision": 89
+        "recall": 94,
+        "precision": 83
       }
-    ]
+    ],
+    "date": "2026-11-06"
   },
   "pii_remover": {
-    "rows": 419,
-    "accuracy": 76,
-    "precision": 100,
-    "recall": 61,
-    "f1": 76,
-    "latency_ms": 2.6567080058157444,
+    "rows": 3300,
+    "accuracy": 86,
+    "precision": 99,
+    "recall": 85,
+    "f1": 92,
+    "latency_ms": 11.4,
     "groups": [
       {
         "name": "English",
-        "rows": 300,
-        "recall": 55,
-        "precision": 100
+        "rows": 910,
+        "recall": 74,
+        "precision": null
       },
       {
-        "name": "Hindi (Devanagari)",
-        "rows": 119,
-        "recall": 82,
-        "precision": 100
+        "name": "Hindi",
+        "rows": 910,
+        "recall": 75,
+        "precision": null
+      },
+      {
+        "name": "Hinglish",
+        "rows": 910,
+        "recall": 72,
+        "precision": null
+      },
+      {
+        "name": "Kannada",
+        "rows": 910,
+        "recall": 73,
+        "precision": null
+      },
+      {
+        "name": "Marathi",
+        "rows": 910,
+        "recall": 75,
+        "precision": null
+      },
+      {
+        "name": "Telugu",
+        "rows": 910,
+        "recall": 72,
+        "precision": null
       }
-    ]
+    ],
+    "date": "2026-11-06"
   },
   "topic_relevance_llm": {
     "rows": 355,

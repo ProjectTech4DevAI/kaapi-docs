@@ -8,7 +8,7 @@ Removes abusive or hurtful words from messages before the assistant reads them.
 
 ## What happens
 
-**↻ Fixes & passes on** — The message continues as normal, with the abusive word hidden. The user is not interrupted.
+**↻ Fixes & passes on** — A listed slur is hidden and the message continues as normal. A message the AI check rates as toxic is replaced as a whole.
 
 ## Example
 
@@ -17,11 +17,11 @@ Removes abusive or hurtful words from messages before the assistant reads them.
 | **User** | `Don't be such an <slur>, you know?` |
 | **Assistant sees** | `Don't be such an [REDACTED_SLUR], you know?` |
 
-The word is hidden before the assistant reads the message.
+The word is hidden before the assistant reads the message. If the AI check also rates the whole message as toxic, the whole message is replaced with your set reply instead.
 
 :::info
 
-Works only when the incoming message is in English, Hindi or Hinglish. Messages in other languages pass through unchecked.
+Tested on English, Hindi and Hinglish. Other languages are not tested.
 
 :::
 
@@ -35,12 +35,13 @@ The abusive word reaches the assistant, and may appear again in the reply. **Ris
 
 ## Settings
 
-Validator: `content_safety`. It first replaces slurs from an English and Hindi list with `[REDACTED_SLUR]`, then scores what is left for profanity.
+Validator: `content_safety`. It runs two checks on the original message: a list of English and Hindi slurs, and an AI model (`textdetox/bert-multilingual-toxicity-classifier`) that scores how toxic the whole message is.
 
 | Setting | Values | What it does |
 | --- | --- | --- |
 | `slur_severity` | `low`, `medium`, `high`, `all` (default `all`) | Minimum slur severity to hide. |
-| `profanity_threshold` | `0`–`1` (default `0.9`) | Profanity score at which the message fails. 0.9 avoids blanking common Hinglish like `kaise ho`. |
+| `threshold` | `0`–`1` (default `0.5`) | Toxicity score at which the whole message is replaced. Raising it removes some false alarms, but not many. |
+| `fallback_message` | text, optional | What the assistant sees or the user gets instead of a toxic message. If empty, the message is blanked. |
 
 ## How well it works
 
@@ -53,10 +54,10 @@ Tested on real-style messages in English, Hindi and Hinglish.
 
 :::warning
 
-- **It misses a sizeable share of toxic messages on real-world data.**
-- **Hindi in Devanagari script is caught less often**, because Hindi slurs are caught only by the slur list.
-- **If profanity remains after slurs are hidden, the message is blanked** — there is no partial fix.
-- **Hiding a slur lowercases the whole message and removes emoji.**
+- **More false alarms than before.** About 1 in 5 flagged messages is actually clean, mostly everyday Hinglish chat and some political Hindi. Part of this is label noise in the test set.
+- **A toxic message is replaced as a whole**, not word by word. Set `fallback_message` for each bot.
+- **Indirect insults are missed**, especially Hindi political ones with no abusive words.
+- **It is slower** than a word list: an AI model runs on every message, and needs a one-time model download of about 700 MB.
 
 :::
 
@@ -67,6 +68,6 @@ Tested on real-style messages in English, Hindi and Hinglish.
 
 **Dataset:** [Evaluation dataset (1,801 samples) ↗](https://drive.google.com/drive/folders/1afTO6K19w1WLJtpe3D0hUfS4dH5Rbos4?usp=drive_link)
 
-The slur-list part of the set scores near-perfect recall only because almost every message in it contains a listed word, so judge recall by the HASOC and ShareChat sources, which score much lower.
+Almost every message in the slur-list part of the set contains a listed word, so that part scores perfect recall on its own; the HASOC and ShareChat parts are a better guide to real-world messages.
 
 </details>
