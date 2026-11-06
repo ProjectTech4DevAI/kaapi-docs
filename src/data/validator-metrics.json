@@ -1,0 +1,150 @@
+{
+  "_run": {
+    "date": "2026-10-27",
+    "sha": "d13c0cd"
+  },
+  "content_safety": {
+    "rows": 1801,
+    "accuracy": 80,
+    "precision": 80,
+    "recall": 92,
+    "f1": 85,
+    "latency_ms": 7.076249981764704,
+    "groups": [
+      {
+        "name": "English",
+        "rows": 727,
+        "recall": 89,
+        "precision": 80
+      },
+      {
+        "name": "Hindi (Devanagari)",
+        "rows": 193,
+        "recall": 92,
+        "precision": 66
+      },
+      {
+        "name": "Hinglish",
+        "rows": 881,
+        "recall": 94,
+        "precision": 83
+      }
+    ],
+    "date": "2026-11-06"
+  },
+  "pii_remover": {
+    "rows": 3300,
+    "accuracy": 86,
+    "precision": 99,
+    "recall": 85,
+    "f1": 92,
+    "latency_ms": 11.4,
+    "groups": [
+      {
+        "name": "English",
+        "rows": 550,
+        "recall": 84,
+        "precision": 100
+      },
+      {
+        "name": "Hindi",
+        "rows": 550,
+        "recall": 86,
+        "precision": 99
+      },
+      {
+        "name": "Hinglish",
+        "rows": 550,
+        "recall": 84,
+        "precision": 100
+      },
+      {
+        "name": "Kannada",
+        "rows": 550,
+        "recall": 85,
+        "precision": 99
+      },
+      {
+        "name": "Marathi",
+        "rows": 550,
+        "recall": 86,
+        "precision": 99
+      },
+      {
+        "name": "Telugu",
+        "rows": 550,
+        "recall": 84,
+        "precision": 99
+      }
+    ],
+    "date": "2026-11-06"
+  },
+  "topic_relevance_llm": {
+    "rows": 355,
+    "accuracy": 90,
+    "precision": 90,
+    "recall": 78,
+    "f1": 84,
+    "latency_ms": 2704.84791698982,
+    "groups": [
+      {
+        "name": "Education",
+        "rows": 192,
+        "recall": 84,
+        "precision": 88
+      },
+      {
+        "name": "Healthcare",
+        "rows": 163,
+        "recall": 71,
+        "precision": 94
+      },
+      {
+        "name": "English",
+        "rows": 116,
+        "recall": 82,
+        "precision": 84
+      },
+      {
+        "name": "Hindi (Devanagari)",
+        "rows": 24,
+        "recall": 100,
+        "precision": 100
+      },
+      {
+        "name": "Hinglish",
+        "rows": 215,
+        "recall": 74,
+        "precision": 96
+      }
+    ]
+  },
+  "gender_assumption_bias": {
+    "rows": 600,
+    "accuracy": 93,
+    "precision": 100,
+    "recall": 87,
+    "f1": 93,
+    "latency_ms": 0.06525000208057463,
+    "groups": [
+      {
+        "name": "English",
+        "rows": 200,
+        "recall": 100,
+        "precision": 100
+      },
+      {
+        "name": "Hindi (Devanagari)",
+        "rows": 200,
+        "recall": 80,
+        "precision": 100
+      },
+      {
+        "name": "Hinglish",
+        "rows": 200,
+        "recall": 80,
+        "precision": 100
+      }
+    ]
+  }
+}

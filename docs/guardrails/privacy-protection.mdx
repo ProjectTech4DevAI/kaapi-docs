@@ -1,3 +1,5 @@
+import {MetricsHeadline, MetricsDetails} from '@site/src/components/Metrics';
+
 # Privacy Protection
 
 **Runs on incoming messages**
@@ -31,23 +33,44 @@ Personal details get saved and can be shown again in the chat, exactly as the us
 
 :::
 
+## Settings
+
+Validator: `pii_remover`.
+
+| Setting | Values | What it does |
+| --- | --- | --- |
+| `entity_types` | list (default: all pattern-based types) | What to mask, e.g. `PHONE_NUMBER`, `EMAIL_ADDRESS`, `CREDIT_CARD`, `IN_AADHAAR`, `IN_PAN`, `IN_PASSPORT`, `IN_VOTER`. `PERSON`, `LOCATION` and `NRP` are opt-in. |
+
+:::info
+
+The scores below were measured with all types switched on, including names and locations. With the default list, names, places and nationalities are not masked, so real recall is lower.
+
+:::
+
 ## How well it works
 
-| Accuracy | Response time |
-| --- | --- |
-| **86%** | **0.02 sec** |
+<MetricsHeadline validator="pii_remover" />
 
-Tested on 419 real-style messages in English, Hindi and Hinglish.
+Tested on real-style messages in English, Hindi, Hinglish, Kannada, Marathi and Telugu, with every personal-detail type switched on.
+
+
+## Known limitations
+
+:::warning
+
+- **About 1 in 4 personal details is still left in the text.** Names are the hardest (about 7 in 10 fully masked); some names keep a fragment.
+- **Nationalities and religions (NRP) are almost never masked**, because the Indian-language name model has no label for them.
+- **Indian medical registration numbers are not recognised.**
+- **Scores are similar across all six languages**, so no language is clearly weaker.
+- **Aadhaar and IBAN scores are understated:** most of the synthetic numbers in the test set are invalid, so they are not recognised. Valid Aadhaar numbers were all caught.
+
+:::
 
 <details open>
 <summary>Technical details</summary>
 
-| Method | Accuracy | Precision | Recall | F1 | Sample size |
-| --- | --- | --- | --- | --- | --- |
-| Rule + ML | 84% | 92% | 80% | 86% | 419 |
+<MetricsDetails validator="pii_remover" method="Rule + ML" />
 
-**Dataset:** [Evaluation dataset (419 samples) ↗](https://drive.google.com/drive/folders/1Fx8JDLZd-_lDnU68IOgT-turNW9N-c0V?usp=drive_link)
-
-Named-entity recognition tuned for Indian PII formats (Aadhaar-like numbers, phone numbers, addresses), evaluated on 419 real-style samples in English, Hindi and Hinglish. Precision (92%) means false alarms are rare; recall (80%) means about 1 in 5 real personal details slipped through unmasked. F1 (86%) balances the two.
+**Dataset:** 3,300 synthetic messages (550 each in six languages; 3,000 with personal details, 300 clean) with 5,460 labelled values. The earlier [419-sample English and Hindi set ↗](https://drive.google.com/drive/folders/1Fx8JDLZd-_lDnU68IOgT-turNW9N-c0V?usp=drive_link) is no longer used for these scores.
 
 </details>

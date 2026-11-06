@@ -1,3 +1,5 @@
+import {MetricsHeadline, MetricsDetails} from '@site/src/components/Metrics';
+
 # Scope Control
 
 **Runs on incoming messages**
@@ -31,23 +33,43 @@ The assistant answers questions it should stay away from. **Risk:** users may ge
 
 :::
 
+## Settings
+
+Validator: `topic_relevance_llm`. One AI call scores each message from 1 (clearly out of scope) to 3 (clearly fine).
+
+| Setting | Values | What it does |
+| --- | --- | --- |
+| `configuration` | text | The topics you list, written in plain language. |
+| `prompt_schema_version` | `1` allowed topics, `2` forbidden topics (default), `3` both | How the topic text is read. |
+| `threshold` | `1`–`3` (default `2`) | `3` also blocks ambiguous messages. |
+| `fallback_message` | text, optional | The set reply sent when a message is blocked. |
+
+The check fails closed: if the configuration is empty or the AI call fails, the message is blocked.
+
 ## How well it works
 
-| Accuracy | Response time |
-| --- | --- |
-| **82%** | **1–2 sec** |
+<MetricsHeadline validator="topic_relevance_llm" />
 
-Tested on 355 real-style messages across education and healthcare topics, in English, Hinglish and Hindi.
+Tested on real-style messages across education and healthcare topics, in English, Hinglish and Hindi.
+
+
+## Known limitations
+
+:::warning
+
+- **Each check is an AI call, so it is much slower than the other guardrails** and needs an OpenAI key.
+- **Beauty and weight questions in healthcare often get through**.
+- **Some valid questions are blocked**, e.g. "where can I get my baby's vaccination near my village?".
+
+:::
 
 <details open>
 <summary>Technical details</summary>
 
-| Method | Accuracy | Precision | Recall | F1 | Sample size |
-| --- | --- | --- | --- | --- | --- |
-| LLM | 89% | 90% | 76% | 82% | 355 |
+<MetricsDetails validator="topic_relevance_llm" method="LLM" />
 
 **Dataset:** [Evaluation dataset (355 samples) ↗](https://drive.google.com/drive/folders/1gPfnUX1F42zVQbaSWMQDSUOslO3_J0dB?usp=drive_link)
 
-Evaluated on 355 real-style messages across education and healthcare topics, in English, Hinglish and Hindi. Precision (90%) means false alarms are rare — about 1 in 10 blocked messages was actually in scope; recall (76%) means roughly 1 in 4 out-of-scope questions still gets through. F1 (82%) balances the two.
+Results vary a little between runs, so treat differences under 2–3 points as noise.
 
 </details>

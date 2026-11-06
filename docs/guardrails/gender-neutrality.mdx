@@ -1,3 +1,5 @@
+import {MetricsHeadline, MetricsDetails} from '@site/src/components/Metrics';
+
 # Gender Neutrality
 
 **Runs on the assistant's replies**
@@ -33,13 +35,19 @@ The assistant guesses a gender — like calling a child "beta" (son) — even wh
 
 :::
 
+## Settings
+
+Validator: `gender_assumption_bias`.
+
+| Setting | Values | What it does |
+| --- | --- | --- |
+| `categories` | `generic`, `healthcare`, `education`, `all` (default `all`) | Which word lists to apply. |
+
 ## How well it works
 
-| Accuracy | Response time |
-| --- | --- |
-| **81%** | **0.28 ms** |
+<MetricsHeadline validator="gender_assumption_bias" />
 
-Tested on 600 real-style messages across English, Hindi and Hinglish.
+Tested on real-style messages across English, Hindi and Hinglish.
 
 ## Known limitations
 
@@ -61,12 +69,10 @@ Tested on 600 real-style messages across English, Hindi and Hinglish.
 <details open>
 <summary>Technical details</summary>
 
-| Method | Accuracy | Precision | Recall | F1 | Sample size |
-| --- | --- | --- | --- | --- | --- |
-| Rule-based | 80% | 76% | 87% | 81% | 600 |
+<MetricsDetails validator="gender_assumption_bias" method="Rule-based" />
 
 **Dataset:** [Evaluation dataset (600 samples) ↗](https://drive.google.com/drive/folders/1tLWC6-L7-V5bknZfbygHI-MpoDxAlSe5?usp=drive_link)
 
-Evaluated on 600 real-style messages across English, Hindi and Hinglish. Precision (76%) means about 1 in 4 flags is a false alarm; recall (87%) means most real gender assumptions are caught, though some still slip through. F1 (81%) balances the two.
+The set has only 15 unique biased sentences, each repeated 20 times, so take the scores as optimistic.
 
 </details>
