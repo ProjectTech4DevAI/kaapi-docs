@@ -33,20 +33,6 @@ Personal details get saved and can be shown again in the chat, exactly as the us
 
 :::
 
-## Settings
-
-Validator: `pii_remover`.
-
-| Setting | Values | What it does |
-| --- | --- | --- |
-| `entity_types` | list (default: all pattern-based types) | What to mask, e.g. `PHONE_NUMBER`, `EMAIL_ADDRESS`, `CREDIT_CARD`, `IN_AADHAAR`, `IN_PAN`, `IN_PASSPORT`, `IN_VOTER`. `PERSON`, `LOCATION` and `NRP` are opt-in. |
-
-:::info
-
-The scores below were measured with all types switched on, including names and locations. With the default list, names, places and nationalities are not masked, so real recall is lower.
-
-:::
-
 ## How well it works
 
 <MetricsHeadline validator="pii_remover" />

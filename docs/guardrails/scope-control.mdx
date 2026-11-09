@@ -33,19 +33,6 @@ The assistant answers questions it should stay away from. **Risk:** users may ge
 
 :::
 
-## Settings
-
-Validator: `topic_relevance_llm`. One AI call scores each message from 1 (clearly out of scope) to 3 (clearly fine).
-
-| Setting | Values | What it does |
-| --- | --- | --- |
-| `configuration` | text | The topics you list, written in plain language. |
-| `prompt_schema_version` | `1` allowed topics, `2` forbidden topics (default), `3` both | How the topic text is read. |
-| `threshold` | `1`–`3` (default `2`) | `3` also blocks ambiguous messages. |
-| `fallback_message` | text, optional | The set reply sent when a message is blocked. |
-
-The check fails closed: if the configuration is empty or the AI call fails, the message is blocked.
-
 ## How well it works
 
 <MetricsHeadline validator="topic_relevance_llm" />

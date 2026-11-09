@@ -33,16 +33,6 @@ The abusive word reaches the assistant, and may appear again in the reply. **Ris
 
 :::
 
-## Settings
-
-Validator: `content_safety`. It runs two checks on the original message: a list of English and Hindi slurs, and an AI model (`textdetox/bert-multilingual-toxicity-classifier`) that scores how toxic the whole message is.
-
-| Setting | Values | What it does |
-| --- | --- | --- |
-| `slur_severity` | `low`, `medium`, `high`, `all` (default `all`) | Minimum slur severity to hide. |
-| `threshold` | `0`–`1` (default `0.5`) | Toxicity score at which the whole message is replaced. Raising it removes some false alarms, but not many. |
-| `fallback_message` | text, optional | What the assistant sees or the user gets instead of a toxic message. If empty, the message is blanked. |
-
 ## How well it works
 
 <MetricsHeadline validator="content_safety" />
