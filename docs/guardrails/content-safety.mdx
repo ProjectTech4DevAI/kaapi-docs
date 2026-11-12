@@ -4,20 +4,28 @@ import {MetricsHeadline, MetricsDetails} from '@site/src/components/Metrics';
 
 **Runs on incoming messages**
 
-Removes abusive or hurtful words from messages before the assistant reads them.
+Stops abusive messages from reaching the assistant, and hides slurs in messages that are otherwise fine.
 
 ## What happens
 
-**↻ Fixes & passes on** — A listed slur is hidden and the message continues as normal. A message the AI check rates as toxic is replaced as a whole.
+**⊖ Blocks — sends set reply** — If the message is rated as toxic, it never reaches the AI assistant. The user gets a reply asking them to rephrase.
+
+**↻ Fixes & passes on** — If the message only contains a listed slur and is not rated toxic overall, the slur is hidden and the message continues as normal.
 
 ## Example
 
 | | |
 | --- | --- |
-| **User** | `Don't be such an <slur>, you know?` |
-| **Assistant sees** | `Don't be such an [REDACTED_SLUR], you know?` |
+| **User** | `You are a worthless idiot, get lost` |
+| **User gets** | `Please rephrase the query without unsafe content.` |
 
-The word is hidden before the assistant reads the message. If the AI check also rates the whole message as toxic, the whole message is replaced with your set reply instead.
+The assistant never sees the message.
+
+:::info
+
+The reply is automatically translated by AI to match the language and script the user wrote in — Hindi in Devanagari, Hinglish in Latin letters, English unchanged. You can write your own reply instead of the default.
+
+:::
 
 :::info
 
@@ -45,9 +53,9 @@ Tested on real-style messages in English, Hindi and Hinglish.
 :::warning
 
 - **More false alarms than before.** About 1 in 5 flagged messages is actually clean, mostly everyday Hinglish chat and some political Hindi. Part of this is label noise in the test set.
-- **A toxic message is replaced as a whole**, not word by word. Set `fallback_message` for each bot.
+- **A toxic message is blocked as a whole**, not word by word, so the user always gets the rephrase reply.
 - **Indirect insults are missed**, especially Hindi political ones with no abusive words.
-- **It is slower** than a word list: an AI model runs on every message, and needs a one-time model download of about 700 MB.
+- **It is slower** than a word list: an AI model runs on every message (about 7 ms).
 
 :::
 
